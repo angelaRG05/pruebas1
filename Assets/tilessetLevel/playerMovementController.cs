@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -16,6 +17,9 @@ public class PlayerController2D : MonoBehaviour
     private bool isGrounded;
     private float moveInput;
 
+    public int monedas = 0;
+    public TextMeshProUGUI txt_monedas;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -31,6 +35,8 @@ public class PlayerController2D : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
+
+
     }
 
     void FixedUpdate()
@@ -40,6 +46,8 @@ public class PlayerController2D : MonoBehaviour
 
         // Comprobaci�n del suelo con SphereCast
         isGrounded = CheckGrounded();
+
+        txt_monedas.text = "Monedas: " + monedas.ToString();
     }
 
     bool CheckGrounded()
@@ -63,4 +71,32 @@ public class PlayerController2D : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Coin"))
+        {
+            Debug.Log("Ha conseguido la moneda collider");
+            Destroy(collision.collider.gameObject);
+            
+        }
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Coin"))
+        {
+            monedas++;
+            Debug.Log("Ha conseguido la moneda trigger " + monedas);
+            Destroy(collision.gameObject);
+
+           
+        }
+    }
+
+
+
+
+
 }
