@@ -16,19 +16,30 @@ public class PlayerController2D : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private float moveInput;
+    private Animator anim;
+    private SpriteRenderer sr;
 
     public int monedas = 0;
-    public TextMeshProUGUI txt_monedas;
+
+    private void Awake()
+    {
+        // busca el componente del mismo objeto en el que se encuentra el script 
+        anim = GetComponent<Animator>(); 
+        sr = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
+    }
+
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        
     }
 
     void Update()
     {
         // Movimiento horizontal
         moveInput = Input.GetAxis("Horizontal");
+        bool running = Input.GetKey(KeyCode.LeftShift);
 
         // Saltar si est� en el suelo
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -36,7 +47,23 @@ public class PlayerController2D : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
 
+        // Hacer flip en sp
+        if (moveInput < 0)
+        {
+            sr.flipX = true;
+        } else if (moveInput > 0) 
+        {
+            sr.flipX= false;
+        }
 
+        if (moveInput != 0)
+        {
+            anim.SetBool("Walk", true);
+        }
+        else if (moveInput == 0)
+        {
+            anim.SetBool("Walk", false);
+        }
     }
 
     void FixedUpdate()
@@ -47,7 +74,6 @@ public class PlayerController2D : MonoBehaviour
         // Comprobaci�n del suelo con SphereCast
         isGrounded = CheckGrounded();
 
-        txt_monedas.text = "Monedas: " + monedas.ToString();
     }
 
     bool CheckGrounded()
